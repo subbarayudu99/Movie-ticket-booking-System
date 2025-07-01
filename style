@@ -1,0 +1,160 @@
+/* Apply background image to all pages */
+body {
+    background-image: url('/static/movie.jpg');  /* Ensure the path is correct */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;  /* Ensures the background covers full page height */
+}
+
+/* Centered title */
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: white;
+}
+
+/* Movie container to hold all movie boxes */
+.movie-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Individual movie box styling */
+.movie-box {
+    background-color: rgba(0, 0, 0, 0.7);  /* Transparent background for movie boxes */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 15px;
+    padding: 15px;
+    width: 200px;  /* Slightly increased width for proper fitting */
+    text-align: center;
+    color: white;  /* Ensure text inside boxes is visible */
+}
+
+/* Movie poster/image */
+.movie-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Button to book movie */
+.book-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;  /* Make sure it stays within the movie box */
+}
+
+/* Hover effect for the book button */
+.book-button:hover {
+    background-color: #218838;
+}
+
+/* Styling for forms (optional) */
+form {
+    background-color: rgba(0, 0, 0, 0.7);  /* Transparent form background */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    color: white;
+}
+
+/* Input fields and select dropdowns */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Submit button for the forms */
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Align "Register Here" link properly within the login container */
+.container {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.8);  /* Dark background for the login and registration containers */
+    padding: 20px;
+    border-radius: 8px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+a {
+    display: block;
+    margin-top: 10px;  /* Add space from the button */
+    color: #ddd;
+    text-align: center;  /* Center the link text */
+}
+
+a:hover {
+    color: #fff;
+}
+
+/* Centered and styled ticket display */
+.ticket-container {
+    width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: black;  /* Ensure text is readable on the ticket */
+}
+
+/* Styling for the navigation links in the ticket page */
+.nav-link {
+    color: black;  /* Set the font color to black for visibility */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: darkgray;  /* Optional hover effect */
+}
+
+/* Add responsiveness for smaller screens */
+@media screen and (max-width: 600px) {
+    .movie-box {
+        width: 100%;  /* Make movie boxes fill the width on small screens */
+        margin: 10px 0;
+    }
+
+    .container {
+        width: 90%;  /* Adjust container width on smaller screens */
+    }
+
+    .ticket-container {
+        width: 90%;  /* Adjust ticket container width */
+    }
+}
