@@ -1,0 +1,133 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+# In-memory database for demonstration
+users = {}
+theaters = {
+    "Theater 1": 100,
+    "Theater 2": 100,
+    "Theater 3": 100,
+    "Theater 4": 100
+}
+
+movies = {
+    "Avengers": {"image": "avengers.jpg", "theaters": ["Theater 1", "Theater 2"], "formats": ["2D", "3D"], "timings": ["10:00 AM", "1:00 PM", "4:00 PM"]},
+    "Batman": {"image": "batman.jpg", "theaters": ["Theater 3", "Theater 4"], "formats": ["2D", "3D"], "timings": ["11:00 AM", "2:00 PM", "5:00 PM"]},
+    "Oppenheimer": {"image": "oppenheimer.jpg", "theaters": ["Theater 1", "Theater 3"], "formats": ["2D", "3D"], "timings": ["12:00 PM", "3:00 PM", "6:00 PM"]},
+    "Deadpool": {"image": "deadpool.jpg", "theaters": ["Theater 2", "Theater 4"], "formats": ["2D", "3D"], "timings": ["1:00 PM", "4:00 PM", "7:00 PM"]}
+}
+
+languages = ["English", "Hindi"]
+locations = ["Mumbai", "Ahmedabad", "Delhi", "Bangalore", "Hyderabad", "Pune", "Chennai", "Kolkata", "Jaipur", "Lucknow"]
+
+@app.route('/')
+def home():
+    if 'username' in session:
+        return render_template('home.html', movies=movies)
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username in users and users[username] == password:
+            session['username'] = username
+            return redirect(url_for('home'))
+        flash('Invalid credentials')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    if 'username' in session:
+        session.pop('username', None)
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username not in users:
+            users[username] = password
+            flash('Registration successful! Please login.')
+            return redirect(url_for('login'))
+        flash('Username already exists.')
+    return render_template('register.html')
+
+@app.route('/movie/<movie_name>')
+def select_movie(movie_name):
+    movie = movies.get(movie_name)
+    if not movie:
+        flash("Movie not found.")
+        return redirect(url_for('home'))
+    return render_template('booking.html', movie_name=movie_name, movie=movie, theaters=theaters, languages=languages, locations=locations)
+
+@app.route('/book', methods=['POST'])
+def book():
+    try:
+        movie_name = request.form.get('movie_name')
+        theater = request.form.get('theater')
+        location = request.form.get('location')
+        seats = request.form.get('seats')
+        language = request.form.get('language')
+        format = request.form.get('format')
+        timing = request.form.get('timing')
+        payment = request.form.get('payment_method')
+
+        if not seats or not seats.isdigit() or int(seats) <= 0:
+            flash('Invalid number of seats. Please provide a valid number.')
+            return redirect(url_for('select_movie', movie_name=movie_name))
+
+        seats = int(seats)
+
+        if theaters[theater] >= seats:
+            theaters[theater] -= seats
+            booking_info = {
+                'movie': movie_name,
+                'theater': theater,
+                'location': location,
+                'seats': seats,
+                'language': language,
+                'format': format,
+                'timing': timing,
+                'payment': payment,
+                'user': session['username']
+            }
+            return render_template('payment.html', booking_info=booking_info)
+
+        flash('Not enough seats available.')
+        return redirect(url_for('select_movie', movie_name=movie_name))
+
+    except Exception as e:
+        flash(f"Error processing your booking: {str(e)}")
+        return redirect(url_for('home'))
+
+@app.route('/confirm_payment', methods=['POST'])
+def confirm_payment():
+    try:
+        card_number = request.form.get('card_number')
+        expiry_date = request.form.get('expiry_date')
+        cvv = request.form.get('cvv')
+
+        if not card_number or not expiry_date or not cvv:
+            flash("Invalid payment information")
+            return redirect(url_for('home'))
+
+        booking_info = request.form.to_dict()
+        flash("Payment successful! Booking complete.")
+        return render_template('ticket.html', booking_info=booking_info)
+
+    except Exception as e:
+        flash(f"Error processing payment: {str(e)}")
+        return redirect(url_for('home'))
+
+@app.route('/cancel_ticket', methods=['POST'])
+def cancel_ticket():
+    flash("Your ticket has been canceled.")
+    return redirect(url_for('home'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
